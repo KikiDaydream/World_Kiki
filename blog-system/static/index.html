@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kiki 的博客</title>
+<style>
+/* ====== CSS Variables ====== */
+:root {
+  --color-primary: #6366f1;
+  --color-primary-hover: #4f46e5;
+  --color-primary-light: #eef2ff;
+  --color-bg: #ffffff;
+  --color-bg-secondary: #f8fafc;
+  --color-text: #1e293b;
+  --color-text-secondary: #64748b;
+  --color-border: #e2e8f0;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 28px;
+  --border-radius: 8px;
+  --content-max-width: 1200px;
+  --content-padding: 24px;
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
+  color: var(--color-text);
+  background: var(--color-bg-secondary);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; font-size: inherit; }
+
+/* ====== Background ====== */
+body::before {
+  content: '';
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(99,102,241,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(139,92,246,0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(165,180,252,0.04) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ====== Header ====== */
+.site-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(255,255,255,0.85); backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0 var(--content-padding);
+}
+.header-inner {
+  max-width: var(--content-max-width); margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 60px;
+}
+.logo { font-size: var(--font-size-xl); font-weight: 700; color: var(--color-primary); }
+.nav-links { display: flex; gap: var(--spacing-lg); }
+.nav-links a {
+  font-size: var(--font-size-sm); color: var(--color-text-secondary);
+  transition: color 0.2s; padding: 4px 0;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--color-primary); }
+
+/* ====== Page Container ====== */
+.page-container { margin-top: 60px; }
+
+/* ====== Hero Section ====== */
+.hero-section {
+  width: 100%; height: 100vh; min-height: 500px;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
+  overflow: hidden; position: relative;
+}
+.hero-content { position: relative; z-index: 2; text-align: center; color: #fff; padding: 0 var(--content-padding); }
+.hero-text { animation: heroUp 1s ease-out; }
+@keyframes heroUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hero-title { font-size: 3.5rem; font-weight: 700; letter-spacing: 4px; margin-bottom: var(--spacing-md); text-shadow: 0 2px 20px rgba(0,0,0,0.3); }
+.hero-desc { font-size: 1.2rem; opacity: 0.85; margin-bottom: var(--spacing-xl); text-shadow: 0 1px 10px rgba(0,0,0,0.3); }
+.hero-search { max-width: 500px; margin: 0 auto; }
+.hero-search input {
+  width: 100%; padding: 12px 20px; border-radius: 24px; border: none;
+  font-size: var(--font-size-base); outline: none;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+.scroll-hint {
+  position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: var(--spacing-sm);
+  cursor: pointer; opacity: 0.7; transition: opacity 0.3s;
+  animation: hintPulse 2s ease-in-out infinite;
+}
+.scroll-hint:hover { opacity: 1; }
+@keyframes hintPulse {
+  0%, 100% { opacity: 0.5; transform: translateX(-50%) translateY(0); }
+  50% { opacity: 0.9; transform: translateX(-50%) translateY(5px); }
+}
+.scroll-text { font-size: var(--font-size-xs); color: #fff; letter-spacing: 2px; }
+.arrow-down {
+  display: block; width: 10px; height: 10px;
+  border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+  transform: rotate(45deg); margin-top: -6px;
+  animation: arrowMove 1.5s ease-in-out infinite;
+}
+.arrow-down:nth-child(2) { animation-delay: 0.3s; }
+@keyframes arrowMove { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+/* ====== Content Section ====== */
+.content-section {
+  background: var(--color-bg-secondary);
+  border-radius: 24px 24px 0 0; padding: var(--spacing-xl) 0;
+  position: relative; z-index: 3; min-height: 60vh;
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+}
+.articles-wrapper {
+  max-width: var(--content-max-width); margin: 0 auto;
+  padding: 0 var(--content-padding);
+}
+
+/* ====== Categories Bar ====== */
+.categories-bar {
+  display: flex; flex-wrap: wrap; gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg); padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+}
+.cat-tag {
+  display: inline-block; padding: 4px 12px; font-size: var(--font-size-xs);
+  border-radius: 20px; background: var(--color-bg);
+  color: var(--color-text-secondary); border: 1px solid var(--color-border);
+  transition: all 0.2s; cursor: pointer; user-select: none;
+}
+.cat-tag:hover, .cat-tag.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+
+/* ====== Home Layout ====== */
+.home-layout { display: flex; gap: var(--spacing-xl); align-items: flex-start; }
+.main-content-area { flex: 1; min-width: 0; }
+.article-list { display: flex; flex-direction: column; gap: var(--spacing-md); }
+
+/* ====== Article Card ====== */
+.article-card {
+  background: var(--color-bg); border: 1px solid var(--color-border);
+  border-radius: var(--border-radius); padding: var(--spacing-lg);
+  cursor: pointer; transition: all 0.3s ease;
+  animation: cardSlideUp 0.5s ease both;
+}
+.article-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--color-primary); }
+@keyframes cardSlideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.card-meta { display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-sm); font-size: var(--font-size-xs); color: var(--color-text-secondary); }
+.card-cat { background: var(--color-primary-light); color: var(--color-primary); padding: 2px 8px; border-radius: 4px; font-weight: 500; }
+.card-title { font-size: var(--font-size-xl); font-weight: 600; color: var(--color-text); margin-bottom: var(--spacing-sm); line-height: 1.4; }
+.card-summary { font-size: var(--font-size-sm); color: var(--color-text-secondary); line-height: 1.7; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: var(--spacing-md); }
+.card-footer { display: flex; justify-content: flex-end; }
+.read-more { font-size: var(--font-size-sm); color: var(--color-primary); font-weight: 500; }
+
+/* ====== Sidebar ====== */
+.sidebar-area {
+  width: 280px; flex-shrink: 0;
+  position: sticky; top: calc(60px + var(--spacing-lg));
+  display: flex; flex-direction: column; gap: var(--spacing-md);
+  max-height: calc(100vh - 60px - var(--spacing-lg) * 2);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+.sidebar-area::-webkit-scrollbar { width: 4px; }
+.sidebar-area::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
+
+.profile-card {
+  background: var(--color-bg); border: 1px solid var(--color-border);
+  border-radius: var(--border-radius); padding: var(--spacing-lg);
+  display: flex; flex-direction: column; gap: var(--spacing-md);
+}
+.profile-header { text-align: center; }
+.avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--color-primary-light); margin-bottom: var(--spacing-sm); background: var(--color-bg-secondary); }
+.nickname { font-size: var(--font-size-lg); font-weight: 600; }
+.profile-title { font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-top: 2px; }
+.profile-bio { font-size: var(--font-size-sm); color: var(--color-text-secondary); line-height: 1.7; }
+.info-row { display: flex; align-items: center; gap: var(--spacing-xs); font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+.section-label { font-size: var(--font-size-xs); font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: var(--spacing-xs); }
+.skills-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.skill-tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; background: var(--color-primary-light); color: var(--color-primary); }
+.stats-row { display: flex; justify-content: space-around; padding: var(--spacing-sm) 0; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
+.stat-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.stat-value { font-size: var(--font-size-lg); font-weight: 700; color: var(--color-primary); }
+.stat-label { font-size: var(--font-size-xs); color: var(--color-text-secondary); }
+.social-links { display: flex; gap: var(--spacing-md); }
+.social-link { font-size: var(--font-size-sm); color: var(--color-primary); }
+.about-btn { width: 100%; text-align: center; font-size: var(--font-size-sm); color: var(--color-primary); padding: 8px 0; border-radius: var(--border-radius); transition: background 0.2s; }
+.about-btn:hover { background: var(--color-primary-light); }
+
+.sidebar-section { background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--border-radius); padding: var(--spacing-lg); }
+.sidebar-title { font-size: var(--font-size-sm); font-weight: 600; margin-bottom: var(--spacing-md); color: var(--color-text-secondary); }
+
+/* ====== Calendar Widget ====== */
+.calendar-widget { padding: var(--spacing-md); }
+.cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--spacing-sm); }
+.cal-nav { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--color-border); border-radius: 6px; background: var(--color-bg); color: var(--color-text-secondary); font-size: 16px; cursor: pointer; transition: all 0.2s; line-height: 1; }
+.cal-nav:hover { background: var(--color-primary-light); color: var(--color-primary); border-color: var(--color-primary); }
+.cal-month { font-size: var(--font-size-sm); font-weight: 600; color: var(--color-text); }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
+.cal-day-header { font-size: 11px; font-weight: 600; color: var(--color-text-secondary); padding: 4px 0; }
+.cal-cell { font-size: 12px; padding: 4px 0; border-radius: 6px; color: var(--color-text); transition: background 0.15s; }
+.cal-cell:not(.cal-empty):hover { background: var(--color-primary-light); cursor: pointer; }
+.cal-empty { color: transparent; }
+.cal-today { background: var(--color-primary); color: #fff; font-weight: 600; }
+.cal-today:hover { background: var(--color-primary) !important; }
+
+/* ====== Weather Widget ====== */
+.weather-widget { padding: var(--spacing-md); }
+.weather-loading { display: flex; align-items: center; gap: var(--spacing-sm); color: var(--color-text-secondary); font-size: var(--font-size-sm); padding: var(--spacing-sm) 0; }
+.weather-spinner { width: 14px; height: 14px; border: 2px solid var(--color-border); border-top-color: var(--color-primary); border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block; }
+.weather-loading-text { font-size: var(--font-size-xs); }
+.weather-error { color: #ef4444; font-size: var(--font-size-xs); padding: var(--spacing-sm) 0; }
+.weather-body { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.weather-city { font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--spacing-xs); }
+.weather-main { display: flex; align-items: center; gap: var(--spacing-sm); }
+.weather-icon { font-size: 36px; line-height: 1; }
+.weather-temp { font-size: 28px; font-weight: 700; color: var(--color-text); }
+.weather-desc { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+.weather-feels { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+
+/* ====== Article Detail ====== */
+.article-detail { max-width: 960px; margin: 0 auto; padding: var(--spacing-xl) var(--content-padding); min-height: 70vh; }
+.back-btn {
+  display: inline-flex; align-items: center; gap: var(--spacing-xs);
+  padding: 8px 18px; color: var(--color-text-secondary);
+  font-size: var(--font-size-sm); border-radius: 20px;
+  transition: all 0.25s; margin-bottom: var(--spacing-lg);
+  background: var(--color-bg); border: 1px solid var(--color-border);
+}
+.back-btn:hover { background: var(--color-primary); color: #fff; border-color: var(--color-primary); transform: translateX(-3px); }
+.detail-content {
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.5);
+  border-radius: 16px;
+  padding: 48px 56px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 32px rgba(99,102,241,0.06), 0 20px 60px rgba(0,0,0,0.04);
+}
+.detail-header { margin-bottom: var(--spacing-xl); padding-bottom: var(--spacing-lg); border-bottom: 1px solid rgba(226,232,240,0.6); }
+.detail-meta { display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-md); font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+.detail-cat { background: var(--color-primary-light); color: var(--color-primary); padding: 3px 12px; border-radius: 6px; font-weight: 500; font-size: var(--font-size-xs); }
+.detail-title { font-size: 2.2rem; font-weight: 700; line-height: 1.35; letter-spacing: -0.01em; color: #1e3a5f; }
+
+/* ====== Markdown Body ====== */
+.markdown-body { line-height: 1.9; color: var(--color-text); font-size: 16px; }
+.markdown-body h1 { font-size: 1.8rem; margin: 1.8em 0 0.6em; font-weight: 700; }
+.markdown-body h2 { font-size: 1.4rem; margin: 1.5em 0 0.4em; font-weight: 600; padding-bottom: 0.3em; border-bottom: 1px solid rgba(226,232,240,0.8); }
+.markdown-body h3 { font-size: 1.15rem; margin: 1.2em 0 0.3em; font-weight: 600; }
+.markdown-body p { margin: 0.9em 0; }
+.markdown-body ul, .markdown-body ol { margin: 0.6em 0; padding-left: 1.5em; }
+.markdown-body li { margin: 0.35em 0; }
+.markdown-body code { background: #f1f5f9; padding: 2px 8px; border-radius: 6px; font-size: 0.88em; font-family: "Fira Code", "Consolas", monospace; }
+.markdown-body pre { background: #1e293b; color: #e2e8f0; padding: var(--spacing-lg); border-radius: 12px; overflow-x: auto; margin: 1.2em 0; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+.markdown-body pre code { background: transparent; padding: 0; color: inherit; font-size: 0.9em; }
+.markdown-body blockquote { border-left: 4px solid var(--color-primary); padding: 0.6em 1.2em; margin: 1em 0; color: var(--color-text-secondary); background: var(--color-primary-light); border-radius: 0 10px 10px 0; font-style: italic; }
+.markdown-body strong { font-weight: 700; }
+.markdown-body a { color: var(--color-primary); text-decoration: underline; text-underline-offset: 2px; }
+
+/* ====== Search Page ====== */
+.search-page { min-height: 60vh; max-width: 800px; margin: 0 auto; padding: var(--spacing-xl) var(--content-padding); }
+.search-title { font-size: var(--font-size-xl); margin-bottom: var(--spacing-sm); }
+.search-keyword { color: var(--color-primary); }
+.search-info { color: var(--color-text-secondary); font-size: var(--font-size-sm); margin-bottom: var(--spacing-lg); }
+
+/* ====== About Page ====== */
+.about-page { max-width: 700px; margin: 0 auto; padding: var(--spacing-xl) var(--content-padding); }
+.about-header { text-align: center; padding: var(--spacing-2xl) 0 var(--spacing-xl); }
+.about-name { font-size: var(--font-size-2xl); font-weight: 700; }
+.about-title-tag { color: var(--color-text-secondary); margin-top: var(--spacing-xs); font-size: var(--font-size-base); }
+.about-location { display: flex; align-items: center; justify-content: center; gap: var(--spacing-xs); color: var(--color-text-secondary); font-size: var(--font-size-sm); margin-top: var(--spacing-xs); }
+.about-section { margin-bottom: var(--spacing-xl); padding: var(--spacing-lg); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--border-radius); }
+.about-section h2 { font-size: var(--font-size-lg); font-weight: 600; margin-bottom: var(--spacing-md); }
+.bio-text { color: var(--color-text-secondary); line-height: 1.8; font-size: var(--font-size-base); }
+.skills-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-sm); }
+.skill-badge { display: inline-block; padding: 6px 16px; background: var(--color-primary-light); color: var(--color-primary); border-radius: 20px; font-size: var(--font-size-sm); font-weight: 500; }
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-md); }
+.stat-card { text-align: center; padding: var(--spacing-md); background: var(--color-bg-secondary); border-radius: var(--border-radius); }
+.stat-number { display: block; font-size: var(--font-size-2xl); font-weight: 700; color: var(--color-primary); }
+.stat-desc { font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-top: var(--spacing-xs); }
+.category-list { display: flex; flex-direction: column; gap: var(--spacing-sm); }
+.category-item { display: flex; align-items: center; gap: var(--spacing-md); }
+.cat-name-label { width: 60px; font-size: var(--font-size-sm); font-weight: 500; flex-shrink: 0; }
+.cat-bar-bg { flex: 1; height: 8px; background: var(--color-bg-secondary); border-radius: 4px; overflow: hidden; }
+.cat-bar-fill { height: 100%; background: linear-gradient(90deg, var(--color-primary), var(--color-primary-hover)); border-radius: 4px; transition: width 0.5s ease; }
+.cat-count-num { width: 50px; text-align: right; font-size: var(--font-size-xs); color: var(--color-text-secondary); flex-shrink: 0; }
+.social-row { display: flex; gap: var(--spacing-lg); flex-wrap: wrap; }
+.social-row a { color: var(--color-primary); font-size: var(--font-size-sm); }
+
+/* ====== Empty & Loading ====== */
+.empty-state { text-align: center; padding: var(--spacing-2xl); color: var(--color-text-secondary); }
+.empty-state .empty-icon { font-size: 48px; margin-bottom: var(--spacing-md); }
+.empty-state .empty-text { font-size: var(--font-size-base); }
+.loading { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--spacing-2xl); color: var(--color-primary); }
+.spinner { width: 32px; height: 32px; border: 3px solid var(--color-border); border-top-color: var(--color-primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { margin-top: var(--spacing-md); color: var(--color-text-secondary); font-size: var(--font-size-sm); }
+
+/* ====== Error Box ====== */
+.error-box { text-align: center; padding: var(--spacing-2xl); }
+.error-box .error-icon { font-size: 48px; margin-bottom: var(--spacing-md); }
+.error-box .error-title { font-size: var(--font-size-lg); font-weight: 600; margin-bottom: var(--spacing-sm); }
+.error-box .error-message { color: var(--color-text-secondary); margin-bottom: var(--spacing-md); }
+.error-box .retry-btn { display: inline-block; padding: 8px 24px; background: var(--color-primary); color: #fff; border-radius: var(--border-radius); font-size: var(--font-size-sm); transition: background 0.2s; }
+.error-box .retry-btn:hover { background: var(--color-primary-hover); }
+
+/* ====== Footer ====== */
+.site-footer { text-align: center; padding: var(--spacing-xl); color: var(--color-text-secondary); font-size: var(--font-size-sm); border-top: 1px solid var(--color-border); }
+
+/* ====== Pagination ====== */
+.pagination { display: flex; justify-content: center; align-items: center; gap: var(--spacing-sm); margin-top: var(--spacing-lg); }
+.pagination button { padding: 6px 14px; border: 1px solid var(--color-border); border-radius: var(--border-radius); background: var(--color-bg); color: var(--color-text-secondary); font-size: var(--font-size-sm); transition: all 0.2s; }
+.pagination button:hover:not(:disabled) { border-color: var(--color-primary); color: var(--color-primary); }
+.pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+.pagination button.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+
+/* ====== Responsive ====== */
+@media (max-width: 768px) {
+  .hero-title { font-size: 2rem; }
+  .hero-desc { font-size: 1rem; }
+  .sidebar-area { display: none; }
+  .home-layout { flex-direction: column; }
+  .content-section { border-radius: 16px 16px 0 0; }
+  .article-detail { padding: var(--spacing-md); }
+  .detail-content { padding: 24px 20px; border-radius: 12px; }
+  .detail-title { font-size: 1.4rem; }
+  .markdown-body { font-size: 15px; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .article-card { padding: var(--spacing-md); }
+  .card-title { font-size: var(--font-size-lg); }
+  .nav-links { gap: var(--spacing-sm); }
+  .nav-links a { font-size: var(--font-size-xs); }
+  .about-section { padding: var(--spacing-md); }
+}
+</style>
+</head>
+<body>
+
+<!-- ====== Header ====== -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="#/" class="logo">✧ Kiki</a>
+    <nav class="nav-links">
+      <a href="#/" data-nav="home">首页</a>
+      <a href="#/search" data-nav="search">搜索</a>
+      <a href="#/about" data-nav="about">关于</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ====== Page Container ====== -->
+<div class="page-container" id="app"></div>
+
+<!-- ====== Footer ====== -->
+<footer class="site-footer">
+  <p>&copy; 2026 Kiki 的博客</p>
+</footer>
+
+<script>
+// ============================================================
+// Data
+// ============================================================
+const ARTICLES = [
+  {
+    id: 1, title: '欢迎使用博客系统',
+    content: '# 欢迎使用博客系统\n\n这是一篇示例文章，展示了 Markdown 编辑器的功能。\n\n## 功能特性\n\n- 支持 Markdown 语法\n- 代码高亮\n- 整洁的界面\n\n```javascript\nconsole.log("Hello, Blog!")\n```\n\n> 享受写作的乐趣！',
+    summary: '这是一篇示例文章，展示了博客系统的核心功能。',
+    categoryId: 1, categoryName: '技术', status: 'published',
+    viewCount: 134, createdAt: '2026-05-01 10:00:00', updatedAt: '2026-05-01 10:00:00'
+  },
+  {
+    id: 2, title: 'Vue 3 组合式 API 入门',
+    content: '# Vue 3 组合式 API 入门\n\nVue 3 引入了 Composition API，让我们可以更灵活地组织组件逻辑。\n\n## setup 函数\n\n```vue\n<script setup>\nimport { ref, onMounted } from \'vue\'\n\nconst count = ref(0)\n\nonMounted(() => {\n  console.log(\'组件已挂载\')\n})\n\x3C/script>\n```\n\n## 响应式核心\n\n- `ref()`: 用于基本类型和对象\n- `reactive()`: 用于对象\n- `computed()`: 计算属性\n- `watch()`: 监听变化',
+    summary: 'Vue 3 Composition API 的核心概念和使用方法。',
+    categoryId: 1, categoryName: '技术', status: 'published',
+    viewCount: 62, createdAt: '2026-05-10 14:30:00', updatedAt: '2026-05-10 14:30:00'
+  },
+  {
+    id: 3, title: '周末徒步记',
+    content: '# 周末徒步记\n\n周末和朋友们一起去爬山，感受大自然的美好。\n\n## 路线\n\n从山脚出发，沿着石阶一路上行，沿途风景优美。\n\n## 感受\n\n- 空气清新\n- 身心放松\n- 朋友相聚的快乐\n\n期待下一次的徒步之旅！',
+    summary: '记录周末徒步的自然风光与内心感受。',
+    categoryId: 2, categoryName: '生活', status: 'published',
+    viewCount: 37, createdAt: '2026-05-15 08:00:00', updatedAt: '2026-05-15 08:00:00'
+  },
+  {
+    id: 5, title: 'daydream',
+    content: '莫听穿林打叶声\n何妨吟啸且徐行\n\n```🍂\n( •̀ ω •́ )y\n```',
+    summary: '莫听穿林打叶声，何妨吟啸且徐行。',
+    categoryId: 3, categoryName: '随笔', status: 'published',
+    viewCount: 4, createdAt: '2026-05-31 06:35:10', updatedAt: '2026-05-31 06:35:17'
+  }
+]
+
+const CATEGORIES = [
+  { id: 1, name: '技术', slug: 'tech', sortOrder: 1 },
+  { id: 2, name: '生活', slug: 'life', sortOrder: 2 },
+  { id: 3, name: '随笔', slug: 'essay', sortOrder: 3 },
+  { id: 4, name: '项目', slug: 'project', sortOrder: 4 }
+]
+
+const PROFILE = {
+  nickname: 'Kiki',
+  title: '全栈开发者 & 设计爱好者',
+  bio: '热爱编程、阅读和户外运动。专注于 Web 开发，喜欢用 Vue 和 Node.js 构建美好的产品。这里记录我的学习笔记和生活思考。',
+  location: '中国 · 天津',
+  website: 'https://github.com/kiki',
+  github: 'KikiDaydream',
+  skills: ['Vue', 'React', 'Node.js', 'TypeScript', 'CSS', 'java']
+}
+
+// ============================================================
+// Utils
+// ============================================================
+function formatDate(dateStr) {
+  const d = new Date(dateStr)
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`
+}
+function getSummary(content, maxLen) {
+  const plain = content.replace(/[#*`~>_\-\\\[\]()|]/g,' ').replace(/\s+/g,' ').trim()
+  return plain.length > maxLen ? plain.slice(0, maxLen) + '...' : plain
+}
+function getArticleCounts() {
+  const counts = {}
+  ARTICLES.forEach(a => { counts[a.categoryId] = (counts[a.categoryId] || 0) + 1 })
+  return counts
+}
+
+// ============================================================
+// Markdown Renderer
+// ============================================================
+function renderMarkdown(md) {
+  const blocks = []
+  let html = md
+  html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
+    const esc = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    blocks.push('<pre><code>'+esc.trim()+'</code></pre>')
+    return '\x00BLOCK'+(blocks.length-1)
+  })
+  html = html.replace(/^>\s?(.+)$/gm,'<blockquote>$1</blockquote>')
+  html = html.replace(/<blockquote>[\s\S]*?<\/blockquote>/g, (m) => { blocks.push(m); return '\x00BLOCK'+(blocks.length-1) })
+  html = html.replace(/&/g,'&amp;').replace(/</g,'&lt;')
+  html = html.replace(/^### (.+)$/gm,'<h3>$1</h3>')
+  html = html.replace(/^## (.+)$/gm,'<h2>$1</h2>')
+  html = html.replace(/^# (.+)$/gm,'<h1>$1</h1>')
+  html = html.replace(/^- (.+)$/gm,'<li>$1</li>')
+  html = html.replace(/(<li>.*<\/li>\n?)+/g, m => '<ul>'+m.replace(/\n$/,'')+'</ul>')
+  html = html.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+  html = html.replace(/`([^`]+)`/g,'<code>$1</code>')
+  const blockRe = /^<(h[123]|ul|ol|li|blockquote|pre|div|p)/i
+  const lines = html.split('\n')
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i]
+    if (!l || blockRe.test(l) || l.startsWith('<') || l.startsWith('\x00')) continue
+    lines[i] = '<p>'+l+'</p>'
+  }
+  html = lines.join('\n')
+  html = html.replace(/<\/blockquote>\n<blockquote>/g,'<br>')
+  html = html.replace(/\x00BLOCK(\d+)/g,(_,i) => blocks[parseInt(i)]||'')
+  return html
+}
+
+// ============================================================
+// Calendar
+// ============================================================
+function renderCalendar() {
+  const now = new Date()
+  const year = calYear, month = calMonth
+  const firstDay = new Date(year, month, 1).getDay()
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  const monthNames = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月']
+  const dayNames = ['日','一','二','三','四','五','六']
+  let html = '<div class="calendar-widget sidebar-section"><h3 class="sidebar-title">📅 日历</h3>'
+  html += '<div class="cal-header">'
+  html += '<button class="cal-nav" onclick="calPrevMonth()">‹</button>'
+  html += '<span class="cal-month">'+year+' 年 '+monthNames[month]+'</span>'
+  html += '<button class="cal-nav" onclick="calNextMonth()">›</button>'
+  html += '</div><div class="cal-grid">'
+  dayNames.forEach(d => { html += '<div class="cal-day-header">'+d+'</div>' })
+  for (let i = 0; i < firstDay; i++) html += '<div class="cal-cell cal-empty"></div>'
+  for (let d = 1; d <= daysInMonth; d++) {
+    const isToday = d === now.getDate() && month === now.getMonth() && year === now.getFullYear()
+    html += '<div class="cal-cell'+(isToday?' cal-today':'')+'">'+d+'</div>'
+  }
+  html += '</div></div>'
+  return html
+}
+let calYear = new Date().getFullYear(), calMonth = new Date().getMonth()
+function calPrevMonth() { if (--calMonth < 0) { calMonth=11; calYear-- } renderHome() }
+function calNextMonth() { if (++calMonth > 11) { calMonth=0; calYear++ } renderHome() }
+
+// ============================================================
+// Weather
+// ============================================================
+let weatherCity = '加载中...', weatherData = null, weatherLoading = true, weatherErr = ''
+
+function renderWeather() {
+  let html = '<div class="weather-widget sidebar-section"><h3 class="sidebar-title">🌤 天气</h3>'
+  if (weatherLoading && !weatherData) {
+    html += '<div class="weather-loading"><span class="weather-spinner"></span><span class="weather-loading-text">获取天气信息...</span></div>'
+  } else if (weatherErr) {
+    html += '<div class="weather-error">'+weatherErr+'</div>'
+  } else if (weatherData) {
+    const icon = getWeatherIcon(weatherData.weather_code)
+    const desc = getWeatherDesc(weatherData.weather_code)
+    html += '<div class="weather-body">'
+    html += '<div class="weather-city">'+weatherCity+'</div>'
+    html += '<div class="weather-main"><span class="weather-icon">'+icon+'</span><span class="weather-temp">'+Math.round(weatherData.temperature_2m)+'°</span></div>'
+    html += '<div class="weather-desc">'+desc+'</div>'
+    html += '<div class="weather-feels">体感 '+Math.round(weatherData.apparent_temperature)+'°</div>'
+    html += '</div>'
+  }
+  html += '</div>'
+  return html
+}
+function getWeatherIcon(code) {
+  const m = {0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌦️',55:'🌦️',61:'🌧️',63:'🌧️',65:'🌧️',71:'❄️',73:'❄️',75:'❄️',80:'🌦️',81:'🌦️',82:'🌧️',95:'⛈️',96:'⛈️',99:'⛈️'}
+  return m[code]||'🌈'
+}
+function getWeatherDesc(code) {
+  const m = {0:'晴天',1:'晴',2:'多云',3:'阴天',45:'雾',48:'霜雾',51:'小毛毛雨',53:'毛毛雨',55:'大毛毛雨',61:'小雨',63:'中雨',65:'大雨',71:'小雪',73:'中雪',75:'大雪',80:'阵雨',81:'中阵雨',82:'大阵雨',95:'雷暴',96:'雷暴+冰雹',99:'强雷暴'}
+  return m[code]||'未知'
+}
+async function initWeather() {
+  const defaultLat = 39.9042, defaultLon = 116.4074
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      const {latitude, longitude} = pos.coords
+      let name = '当前位置'
+      try { const r = await fetch('https://geocoding-api.open-meteo.com/v1/reverse?latitude='+latitude+'&longitude='+longitude+'&language=zh&format=json'); const d = await r.json(); if (d.results?.[0]) name = d.results[0].name } catch {}
+      await fetchWeather(latitude, longitude, name)
+    }, async () => { await fetchWeather(defaultLat, defaultLon, '北京') }, { timeout:5000, enableHighAccuracy:false })
+  } else { await fetchWeather(defaultLat, defaultLon, '北京') }
+}
+async function fetchWeather(lat, lon, name) {
+  weatherCity = name
+  try {
+    const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,apparent_temperature,weather_code&timezone=auto')
+    const d = await r.json()
+    if (d.current) { weatherData = d.current; weatherLoading = false } else { weatherErr = '天气数据加载失败'; weatherLoading = false }
+  } catch(e) { weatherErr = '天气加载失败'; weatherLoading = false }
+  renderHomeIfActive()
+}
+function renderHomeIfActive() {
+  if (location.hash === '' || location.hash === '#/' || location.hash.startsWith('#/?')) renderHome()
+}
+
+// ============================================================
+// Cursor Effect
+// ============================================================
+(function initCursor() {
+  const COLORS = ['#6366f1','#818cf8','#a5b4fc','#c7d2fe']
+  let canvas = document.createElement('canvas')
+  canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999'
+  canvas.width = window.innerWidth
+  canvas.height = window.innerHeight
+  document.body.appendChild(canvas)
+  let ctx = canvas.getContext('2d')
+  let particles = [], mx = -100, my = -100, lx = -100, ly = -100
+
+  window.addEventListener('mousemove', function(e) {
+    mx = e.clientX; my = e.clientY
+    const dist = Math.hypot(mx - lx, my - ly)
+    if (dist > 5) {
+      const count = Math.min(Math.floor(dist / 8) + 1, 3)
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2
+        const speed = 0.3 + Math.random() * 0.8
+        particles.push({
+          x: mx + (Math.random()-0.5)*4, y: my + (Math.random()-0.5)*4,
+          vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed - 0.3,
+          size: 3 + Math.random()*4, alpha: 0.6 + Math.random()*0.4,
+          decay: 0.015 + Math.random()*0.015,
+          color: COLORS[Math.floor(Math.random()*COLORS.length)]
+        })
+      }
+      lx = mx; ly = my
+    }
+  })
+
+  window.addEventListener('resize', function() { canvas.width = window.innerWidth; canvas.height = window.innerHeight })
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i]
+      p.x += p.vx; p.y += p.vy; p.vy += 0.02; p.alpha -= p.decay
+      if (p.alpha <= 0) { particles.splice(i, 1); continue }
+      ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill()
+    }
+    if (particles.length > 0) ctx.globalAlpha = 1
+    requestAnimationFrame(animate)
+  }
+  animate()
+})()
+
+// ============================================================
+// Router & Page Renderers
+// ============================================================
+let currentCategory = null, currentPage = 1
+const PAGE_SIZE = 10
+
+function navigateTo(path) { location.hash = path }
+
+function renderHome() {
+  const app = document.getElementById('app')
+  const filtered = currentCategory ? ARTICLES.filter(a => { const c = CATEGORIES.find(cat => cat.slug === currentCategory); return c ? a.categoryId === c.id : true }) : ARTICLES
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
+  const pageArticles = filtered.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE)
+  const counts = getArticleCounts()
+
+  let cardsHtml = ''
+  pageArticles.forEach((a, i) => {
+    const s = a.summary || getSummary(a.content, 120)
+    cardsHtml += '<div class="article-card" style="animation-delay:'+(i*0.08)+'s" onclick="navigateTo(\'/article/'+a.id+'\')">'
+      +'<div class="card-meta">'+(a.categoryName?'<span class="card-cat">'+a.categoryName+'</span>':'')+'<span>'+formatDate(a.createdAt)+'</span><span>👁 '+a.viewCount+'</span></div>'
+      +'<h2 class="card-title">'+a.title+'</h2><p class="card-summary">'+s+'</p>'
+      +'<div class="card-footer"><span class="read-more">阅读全文 →</span></div></div>'
+  })
+
+  let catsHtml = '<span class="cat-tag '+(currentCategory?'':'active')+'" onclick="selectCategory(null)">全部（'+ARTICLES.length+'）</span>'
+  CATEGORIES.forEach(c => { const cnt = counts[c.id]||0; catsHtml += '<span class="cat-tag '+(currentCategory===c.slug?'active':'')+'" onclick="selectCategory(\''+c.slug+'\')">'+c.name+'（'+cnt+'）</span>' })
+
+  let pagiHtml = ''
+  if (totalPages > 1) {
+    pagiHtml = '<div class="pagination"><button '+(currentPage<=1?'disabled':'')+' onclick="changePage('+(currentPage-1)+')">‹</button>'
+    for (let p = 1; p <= totalPages; p++) pagiHtml += '<button class="'+(p===currentPage?'active':'')+'" onclick="changePage('+p+')">'+p+'</button>'
+    pagiHtml += '<button '+(currentPage>=totalPages?'disabled':'')+' onclick="changePage('+(currentPage+1)+')">›</button></div>'
+  }
+
+  const sks = PROFILE.skills.map(s => '<span class="skill-tag">'+s+'</span>').join('')
+  const totalViews = ARTICLES.reduce((s,a) => s + a.viewCount, 0)
+
+  app.innerHTML = '<section class="hero-section"><div class="hero-content"><div class="hero-text"><h1 class="hero-title">探索 · 记录 · 分享</h1>'
+    +'<p class="hero-desc">用文字记录技术和生活的点滴</p>'
+    +'<div class="hero-search"><input type="text" placeholder="搜索文章..." onkeydown="if(event.key===\'Enter\'&&this.value.trim())navigateTo(\'/search?q=\'+encodeURIComponent(this.value.trim()))"></div></div>'
+    +'<div class="scroll-hint" onclick="document.getElementById(\'articles-section\').scrollIntoView({behavior:\'smooth\'})">'
+    +'<span class="scroll-text">向下滚动查看全部文章</span><div class="scroll-arrow"><span class="arrow-down"></span><span class="arrow-down"></span></div></div></section>'
+    +'<div class="content-section"><div class="articles-wrapper" id="articles-section">'
+    +'<div class="categories-bar">'+catsHtml+'</div>'
+    +'<div class="home-layout"><div class="main-content-area">'
+    +(pageArticles.length===0?'<div class="empty-state"><div class="empty-icon">📭</div><p class="empty-text">'+(currentCategory?'该分类暂无文章':'暂无文章')+'</p></div>':'<div class="article-list">'+cardsHtml+'</div>'+pagiHtml)
+    +'</div><aside class="sidebar-area">'
+    +'<div class="profile-card"><div class="profile-header"><div class="avatar" style="display:inline-flex;align-items:center;justify-content:center;background:var(--color-primary-light);color:var(--color-primary);font-size:28px;font-weight:700">'+PROFILE.nickname[0]+'</div>'
+    +'<h3 class="nickname">'+PROFILE.nickname+'</h3><p class="profile-title">'+PROFILE.title+'</p></div>'
+    +'<p class="profile-bio">'+PROFILE.bio+'</p><div class="info-row">📍 '+PROFILE.location+'</div>'
+    +'<div><div class="section-label">技能</div><div class="skills-tags">'+sks+'</div></div>'
+    +'<div class="stats-row"><div class="stat-item"><span class="stat-value">'+ARTICLES.length+'</span><span class="stat-label">文章</span></div>'
+    +'<div class="stat-item"><span class="stat-value">'+totalViews+'</span><span class="stat-label">阅读</span></div>'
+    +'<div class="stat-item"><span class="stat-value">'+CATEGORIES.length+'</span><span class="stat-label">分类</span></div></div>'
+    +'<div class="social-links"><a class="social-link" href="https://github.com/'+PROFILE.github+'" target="_blank">GitHub</a><a class="social-link" href="'+PROFILE.website+'" target="_blank">网站</a></div>'
+    +'<button class="about-btn" onclick="navigateTo(\'/about\')">了解更多 →</button></div>'
+    +renderCalendar()+renderWeather()
+    +'</aside></div></div></div>'
+}
+
+function renderArticle(id) {
+  const app = document.getElementById('app')
+  const article = ARTICLES.find(a => a.id === Number(id))
+  if (!article) {
+    app.innerHTML = '<div class="article-detail"><button class="back-btn" onclick="navigateTo(\'/\')">← 返回</button><div class="empty-state"><div class="empty-icon">📭</div><p class="empty-text">文章不存在</p></div></div>'
+    return
+  }
+  article.viewCount++
+  app.innerHTML = '<div class="article-detail"><button class="back-btn" onclick="navigateTo(\'/\')">← 返回</button>'
+    +'<article class="detail-content"><header class="detail-header"><div class="detail-meta">'
+    +(article.categoryName?'<span class="detail-cat">'+article.categoryName+'</span>':'')
+    +'<span>'+formatDate(article.createdAt)+'</span>'
+    +'<span>👁 '+article.viewCount+' 次阅读</span></div>'
+    +'<h1 class="detail-title">'+article.title+'</h1></header>'
+    +'<div class="markdown-body">'+renderMarkdown(article.content)+'</div></article></div>'
+  document.title = article.title + ' - Kiki 的博客'
+}
+
+function renderSearch() {
+  const app = document.getElementById('app')
+  const q = new URLSearchParams(location.hash.split('?')[1]||'').get('q') || ''
+  let results = q ? ARTICLES.filter(a => a.title.toLowerCase().includes(q.toLowerCase())||a.content.toLowerCase().includes(q.toLowerCase())) : []
+  let resultHtml = ''
+  if (q && results.length > 0) {
+    resultHtml = '<div class="article-list">'
+    results.forEach((a,i) => {
+      const s = a.summary || getSummary(a.content, 120)
+      resultHtml += '<div class="article-card" style="animation-delay:'+(i*0.08)+'s" onclick="navigateTo(\'/article/'+a.id+'\')">'
+        +'<div class="card-meta">'+(a.categoryName?'<span class="card-cat">'+a.categoryName+'</span>':'')+'<span>'+formatDate(a.createdAt)+'</span></div>'
+        +'<h2 class="card-title">'+a.title+'</h2><p class="card-summary">'+s+'</p>'
+        +'<div class="card-footer"><span class="read-more">阅读全文 →</span></div></div>'
+    })
+    resultHtml += '</div>'
+  } else if (q) {
+    resultHtml = '<div class="empty-state"><div class="empty-icon">🔍</div><p class="empty-text">未找到相关文章，请尝试其他关键词</p></div>'
+  }
+  app.innerHTML = '<div class="search-page"><div style="margin-bottom:var(--spacing-lg)">'
+    +'<input type="text" id="search-input" placeholder="搜索文章..." value="'+q+'" style="width:100%;padding:12px 16px;border:2px solid var(--color-border);border-radius:var(--border-radius);font-size:var(--font-size-base);outline:none" onkeydown="if(event.key===\'Enter\'){const v=this.value.trim();navigateTo(\'/search?q=\'+encodeURIComponent(v))}"></div>'
+    +(q?'<h1 class="search-title">搜索结果：<span class="search-keyword">"'+q+'"</span></h1><p class="search-info">共找到 '+results.length+' 篇文章</p>':'<p class="search-info">输入关键词搜索文章</p>')
+    +resultHtml+'</div>'
+  document.title = q ? '搜索 "'+q+'" - Kiki 的博客' : '搜索 - Kiki 的博客'
+  setTimeout(() => { const inp = document.getElementById('search-input'); if (inp) inp.focus() }, 100)
+}
+
+function renderAbout() {
+  const app = document.getElementById('app')
+  const totalViews = ARTICLES.reduce((s,a) => s + a.viewCount, 0)
+  const counts = getArticleCounts()
+  const maxCount = Math.max(...CATEGORIES.map(c => counts[c.id]||0), 1)
+  const sks = PROFILE.skills.map(s => '<span class="skill-badge">'+s+'</span>').join('')
+
+  app.innerHTML = '<div class="about-page"><div class="about-header">'
+    +'<div style="display:flex;align-items:center;justify-content:center;margin-bottom:var(--spacing-md)">'
+    +'<div style="width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--color-primary-light);color:var(--color-primary);font-size:48px;font-weight:700;border:4px solid var(--color-primary-light)">'+PROFILE.nickname[0]+'</div></div>'
+    +'<h1 class="about-name">'+PROFILE.nickname+'</h1><p class="about-title-tag">'+PROFILE.title+'</p><p class="about-location">📍 '+PROFILE.location+'</p></div>'
+    +'<div class="about-section"><h2>📖 关于我</h2><p class="bio-text">'+PROFILE.bio+'</p></div>'
+    +'<div class="about-section"><h2>🛠 技能</h2><div class="skills-grid">'+sks+'</div></div>'
+    +'<div class="about-section"><h2>📊 数据概览</h2><div class="stats-grid">'
+    +'<div class="stat-card"><span class="stat-number">'+ARTICLES.length+'</span><span class="stat-desc">累计文章</span></div>'
+    +'<div class="stat-card"><span class="stat-number">'+totalViews+'</span><span class="stat-desc">总阅读量</span></div>'
+    +'<div class="stat-card"><span class="stat-number">'+CATEGORIES.length+'</span><span class="stat-desc">分类数量</span></div></div></div>'
+    +'<div class="about-section"><h2>📂 分类分布</h2><div class="category-list">'
+    +CATEGORIES.map(c => { const cnt=counts[c.id]||0; return '<div class="category-item"><span class="cat-name-label">'+c.name+'</span><div class="cat-bar-bg"><div class="cat-bar-fill" style="width:'+Math.min(100,(cnt/maxCount)*100)+'%"></div></div><span class="cat-count-num">'+cnt+' 篇</span></div>' }).join('')
+    +'</div></div><div class="about-section"><h2>🔗 社交链接</h2><div class="social-row">'
+    +'<a href="https://github.com/'+PROFILE.github+'" target="_blank">GitHub</a>'
+    +'<a href="'+PROFILE.website+'" target="_blank">个人网站</a></div></div></div>'
+  document.title = '关于 - Kiki 的博客'
+}
+
+function selectCategory(slug) { currentCategory = slug; currentPage = 1; renderHome(); document.title = 'Kiki 的博客' }
+function changePage(page) { currentPage = page; renderHome(); window.scrollTo({ top:0, behavior:'smooth' }) }
+
+// ============================================================
+// Router
+// ============================================================
+function router() {
+  const hash = location.hash.slice(1) || '/'
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    const nav = link.dataset.nav
+    link.classList.toggle('active', hash.startsWith('/'+nav) || (hash==='/'&&nav==='home'))
+  })
+  if (hash.startsWith('/article/')) renderArticle(hash.split('/article/')[1])
+  else if (hash==='/search'||hash.startsWith('/search?')) renderSearch()
+  else if (hash==='/about') renderAbout()
+  else { currentCategory = null; currentPage = 1; renderHome(); document.title = 'Kiki 的博客' }
+}
+
+window.addEventListener('hashchange', router)
+window.addEventListener('load', () => {
+  if (location.hash === '') location.hash = '#/'
+  else router()
+  initWeather()
+})
+</script>
+</body>
+</html>
